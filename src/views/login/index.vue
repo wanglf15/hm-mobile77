@@ -32,6 +32,7 @@
 
 <script>
 import { login } from '@/api/user'
+import { mapMutations } from 'vuex'
 export default {
   name: 'LoginIndex',
   data () {
@@ -43,29 +44,40 @@ export default {
       isLoginLoading: false
     }
   },
+  created () {
+    this.$validator.localize('zh_CN', {
+      custom: {
+        mobile: {
+          required: '手机号不能为空！！！'
+        },
+        code: {
+          required: '验证码不能为空！！！'
+        }
+      }
+    })
+  },
   methods: {
+    ...mapMutations(['setUser']),
     async onLogin () {
       try {
-        this.$validator.validate().then(async valid => {
-          if (!valid) {
-            return
-          }
-          this.isLoginLoading = true
-          const { data } = await login(this.user)
-          console.log(data)
-          this.$router.push({ name: 'home' })
-        })
+        const isValid = this.$validator.validate()
+        if (!isValid) {
+          return
+        }
+        this.isLoginLoading = true
+        const { data } = await login(this.user)
+
+        this.setUser(data.data)
+        this.$router.push({ name: 'home' })
         this.isLoginLoading = false
       } catch (err) {
-        this.isLoginLoading = false
         if (err.response && err.response.status === 400) {
-          console.log(123)
-
           this.$toast.fail('手机号或验证码错误!!')
         }
       }
       this.isLoginLoading = false
     }
+
   }
 }
 </script>

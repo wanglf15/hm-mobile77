@@ -4,3 +4,11 @@
 .van-nav-bar .van-nav-bar__title {
   color: #fff;
 }
+.article-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.article-info .meta span {
+  margin-right: 10px;
+}
